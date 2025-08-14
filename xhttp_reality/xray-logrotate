@@ -1,0 +1,14 @@
+/var/log/xray/*.log {
+    daily
+    missingok
+    rotate 30
+    compress
+    delaycompress
+    notifempty
+    create 0644 root root
+    size 100M
+    postrotate
+        # Send SIGUSR1 to xray to reopen log files if needed
+        # pkill -USR1 xray || true
+    endscript
+}

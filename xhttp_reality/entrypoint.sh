@@ -98,5 +98,10 @@ fi
 # show config info
 cat /config_info.txt
 
+# Setup logrotate cron job
+echo "0 0 * * * /usr/sbin/logrotate /etc/logrotate.d/xray" | crontab -
+# Start crond in background
+crond
+
 # run xray
 exec /xray -config /config.json
