@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  xray_reality:
+    image: damncrab/xray_docker_reality:latest
+    container_name: xray_reality
+    restart: always
+    ports:
+      - "443:443"
+    environment:
+      - EXTERNAL_PORT=443
+    volumes:
+      - ./config:/config
+      - ./logs:/var/log/xray
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "3"

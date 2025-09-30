@@ -1,6 +1,5 @@
 # builder
 FROM golang:alpine AS builder
-LABEL maintainer="wulabing <wulabing@gmail.com>"
 LABEL version="0.0.29"
 
 
@@ -35,11 +34,12 @@ COPY ./config.json /
 
 COPY --from=builder /app/xray /
 
-RUN apk add --no-cache tzdata ca-certificates jq curl libqrencode-tools && \
-    mkdir -p /var/log/xray && \
+RUN apk add --no-cache tzdata ca-certificates jq curl libqrencode-tools logrotate && \
+    mkdir -p /var/log/xray /config && \
     wget -O /geosite.dat https://github.com/v2fly/domain-list-community/releases/latest/download/dlc.dat && \
     wget -O /geoip.dat https://github.com/v2fly/geoip/releases/latest/download/geoip.dat && \
-    chmod +x /entrypoint.sh
+    chmod +x /entrypoint.sh && \
+    echo "/var/log/xray/*.log { daily missingok rotate 7 compress delaycompress notifempty create 644 root root }" > /etc/logrotate.d/xray
 
 
 ENTRYPOINT ["./entrypoint.sh"]

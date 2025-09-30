@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  # Xray Reality 服务
+  xray_reality:
+    image: damncrab/xray_docker_reality:latest
+    container_name: xray_reality
+    restart: always
+    ports:
+      - "443:443"
+    environment:
+      - EXTERNAL_PORT=443
+    volumes:
+      - ./reality_config:/config
+      - ./reality_logs:/var/log/xray
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "3"
+
+  # Xray XHTTP Reality 服务
+  xray_xhttp_reality:
+    image: damncrab/xray_docker_xhttp_reality:latest
+    container_name: xray_xhttp_reality
+    restart: always
+    ports:
+      - "444:443"
+    environment:
+      - EXTERNAL_PORT=444
+    volumes:
+      - ./xhttp_reality_config:/config
+      - ./xhttp_reality_logs:/var/log/xray
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "3"
