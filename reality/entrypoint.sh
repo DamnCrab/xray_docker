@@ -1,7 +1,8 @@
 #!/bin/sh
-if [ -f /config/config_info.txt ]; then
-  echo "config.json exist"
+if [ -f /config/config_info.txt ] && [ -f /config/config.json ]; then
+  echo "Configuration files exist, skipping regeneration"
 else
+  echo "Configuration files missing, generating new configuration"
   IPV6=$(curl -6 -sSL --connect-timeout 3 --retry 2  ip.sb || echo "null")
   IPV4=$(curl -4 -sSL --connect-timeout 3 --retry 2  ip.sb || echo "null")
   if [ -z "$UUID" ]; then
