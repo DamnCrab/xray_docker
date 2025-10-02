@@ -123,25 +123,25 @@ services:
 启动服务：
 
 ```bash
-docker-compose up -d
+docker compose up -d
 ```
 
 查看配置信息：
 
 ```bash
-docker-compose exec xray_reality cat /config/config_info.txt
+docker compose exec xray_reality cat /config/config_info.txt
 ```
 
 查看日志：
 
 ```bash
-docker-compose logs -f xray_reality
+docker compose logs -f xray_reality
 ```
 
 停止服务：
 
 ```bash
-docker-compose down
+docker compose down
 ```
 
 ### 自定义参数的 Docker Compose 配置

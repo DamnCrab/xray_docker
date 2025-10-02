@@ -7,9 +7,9 @@ services:
     container_name: xray_reality
     restart: always
     ports:
-      - "443:443"
+      - "18443:443"
     environment:
-      - EXTERNAL_PORT=443
+      - EXTERNAL_PORT=18443
     volumes:
       - ./reality_config:/config
       - ./reality_logs:/var/log/xray
@@ -25,9 +25,9 @@ services:
     container_name: xray_xhttp_reality
     restart: always
     ports:
-      - "444:443"
+      - "28443:443"
     environment:
-      - EXTERNAL_PORT=444
+      - EXTERNAL_PORT=28443
     volumes:
       - ./xhttp_reality_config:/config
       - ./xhttp_reality_logs:/var/log/xray
