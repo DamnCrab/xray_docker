@@ -63,7 +63,7 @@
     "inbounds": [
       {
         "listen": "127.0.0.1",
-        "port": 65432,
+        "port": 65433,
         "protocol": "dokodemo-door",
         "settings": {
           "address": "127.0.0.1"

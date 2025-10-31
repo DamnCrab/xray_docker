@@ -6,9 +6,9 @@ services:
     image: damncrab/xray_docker_reality:latest
     container_name: xray_reality
     restart: always
-    ports:
-      - "18443:443"
+    network_mode: host
     environment:
+      - HOSTMODE_PORT=18443
       - EXTERNAL_PORT=18443
     volumes:
       - ./reality_config:/config
@@ -24,9 +24,9 @@ services:
     image: damncrab/xray_docker_xhttp_reality:latest
     container_name: xray_xhttp_reality
     restart: always
-    ports:
-      - "28443:443"
+    network_mode: host
     environment:
+      - HOSTMODE_PORT=28443
       - EXTERNAL_PORT=28443
     volumes:
       - ./xhttp_reality_config:/config
