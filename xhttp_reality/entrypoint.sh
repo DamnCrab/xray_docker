@@ -25,7 +25,8 @@ else
 
   if [ -n "$HOSTMODE_PORT" ];then
     EXTERNAL_PORT=$HOSTMODE_PORT
-    jq ".inbounds[1].port=$HOSTMODE_PORT" /config.json >/config/config.json_tmp && mv /config/config.json_tmp /config/config.json
+    jq --argjson port "$HOSTMODE_PORT" 'del(.inbounds[] | select(.protocol == "dokodemo-door")) | (.inbounds[] | select(.protocol == "vless") | .port) = $port | (.inbounds[] | select(.protocol == "vless") | .listen) = "0.0.0.0"' /config.json > /config/config.json_tmp && mv /config/config.json_tmp /config/config.json
+    echo "Host mode port: $HOSTMODE_PORT"
   fi
 
   if [ -z "$DEST" ]; then

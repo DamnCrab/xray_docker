@@ -18,7 +18,13 @@ else
 
   if [ -n "$HOSTMODE_PORT" ];then
     EXTERNAL_PORT=$HOSTMODE_PORT
-    jq ".inbounds[0].port=$HOSTMODE_PORT" /config.json >/config/config.json_tmp && mv /config/config.json_tmp /config/config.json
+    # In host mode, remove dokodemo-door and listen on 0.0.0.0
+    jq '
+      del(.inbounds[] | select(.protocol == "dokodemo-door")) |
+      ( .inbounds[] | select(.protocol == "vless") | .port ) = ('$HOSTMODE_PORT' | tonumber) |
+      ( .inbounds[] | select(.protocol == "vless") | .listen ) = "0.0.0.0"
+    ' /config.json > /config/config.json_tmp && mv /config/config.json_tmp /config/config.json
+    echo "Host mode port: $HOSTMODE_PORT"
   fi
 
   if [ -z "$DEST" ]; then
