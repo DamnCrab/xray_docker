@@ -25,8 +25,9 @@ else
 
   if [ -n "$HOSTMODE_PORT" ];then
     EXTERNAL_PORT=$HOSTMODE_PORT
-    jq --argjson port "$HOSTMODE_PORT" 'del(.inbounds[] | select(.protocol == "dokodemo-door")) | (.inbounds[] | select(.protocol == "vless") | .port) = $port | (.inbounds[] | select(.protocol == "vless") | .listen) = "0.0.0.0"' /config.json > /config/config.json_tmp && mv /config/config.json_tmp /config/config.json
-    echo "Host mode port: $HOSTMODE_PORT"
+    # In host mode, remove dokodemo-door and listen on :: (IPv6 all interfaces, also supports IPv4)
+    jq --argjson port "$HOSTMODE_PORT" 'del(.inbounds[] | select(.protocol == "dokodemo-door")) | (.inbounds[] | select(.protocol == "vless") | .port) = $port | (.inbounds[] | select(.protocol == "vless") | .listen) = "::"' /config.json > /config/config.json_tmp && mv /config/config.json_tmp /config/config.json
+    echo "Host mode port: $HOSTMODE_PORT (listening on :: for IPv4 and IPv6)"
   fi
 
   if [ -z "$DEST" ]; then
@@ -88,7 +89,7 @@ else
     echo -e "IPV4 订阅二维码:\n$(echo "$SUB_IPV4" | qrencode -o - -t UTF8)" >>/config/config_info.txt
   fi
   if [ "$IPV6" != "null" ];then
-    SUB_IPV6="vless://$UUID@$IPV6:$EXTERNAL_PORT?encryption=none&security=reality&type=$NETWORK&sni=$FIRST_SERVERNAME&fp=chrome&pbk=$PUBLICKEY&path=$XHTTP_PATH&mode=auto#${IPV6}-damncrab_docker_xhttp_reality"
+    SUB_IPV6="vless://$UUID@[$IPV6]:$EXTERNAL_PORT?encryption=none&security=reality&type=$NETWORK&sni=$FIRST_SERVERNAME&fp=chrome&pbk=$PUBLICKEY&path=$XHTTP_PATH&mode=auto#${IPV6}-damncrab_docker_xhttp_reality"
     echo "IPV6 订阅连接: $SUB_IPV6" >>/config/config_info.txt
     echo -e "IPV6 订阅二维码:\n$(echo "$SUB_IPV6" | qrencode -o - -t UTF8)" >>/config/config_info.txt
   fi

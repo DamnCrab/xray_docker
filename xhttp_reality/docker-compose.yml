@@ -1,12 +1,24 @@
 version: '3.8'
 
+networks:
+  xray_network:
+    driver: bridge
+    enable_ipv6: true
+    ipam:
+      config:
+        - subnet: 172.21.0.0/16
+        - subnet: fd00:dead:beef:1::/48
+
 services:
   xray_xhttp_reality:
     image: damncrab/xray_docker_xhttp_reality:latest
     container_name: xray_xhttp_reality
     restart: always
+    networks:
+      - xray_network
     ports:
       - "443:443"
+      - "[::]:443:443"
     environment:
       - EXTERNAL_PORT=443
     volumes:
