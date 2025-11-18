@@ -1,5 +1,14 @@
 version: '3.8'
 
+networks:
+  xray_network:
+    driver: bridge
+    enable_ipv6: true
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+        - subnet: fd00:dead:beef::/48
+
 services:
   # Xray Reality 服务
   xray_reality:
