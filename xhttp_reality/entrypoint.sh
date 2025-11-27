@@ -117,12 +117,12 @@ else
   fi
 
   if [ "$IPV4" != "null" ]; then
-    SUB_IPV4="vless://$UUID@$IPV4:$EXTERNAL_PORT?encryption=none&security=reality&type=$NETWORK&sni=$FIRST_SERVERNAME&fp=chrome&pbk=$PUBLICKEY&path=$XHTTP_PATH&mode=auto#${IPV4}-wulabing_docker_xhttp_reality"
+    SUB_IPV4="vless://$UUID@$IPV4:$EXTERNAL_PORT?encryption=none&security=reality&type=$NETWORK&sni=$FIRST_SERVERNAME&fp=chrome&pbk=$PUBLICKEY&path=$XHTTP_PATH&mode=auto#${IPV4}-damncrab_docker_xhttp_reality"
     echo "IPV4 订阅连接: $SUB_IPV4" >>/config_info.txt
     echo -e "IPV4 订阅二维码:\n$(echo "$SUB_IPV4" | qrencode -o - -t UTF8)" >>/config_info.txt
   fi
   if [ "$IPV6" != "null" ];then
-    SUB_IPV6="vless://$UUID@$IPV6:$EXTERNAL_PORT?encryption=none&security=reality&type=$NETWORK&sni=$FIRST_SERVERNAME&fp=chrome&pbk=$PUBLICKEY&path=$XHTTP_PATH&mode=auto#${IPV6}-wulabing_docker_xhttp_reality"
+    SUB_IPV6="vless://$UUID@$IPV6:$EXTERNAL_PORT?encryption=none&security=reality&type=$NETWORK&sni=$FIRST_SERVERNAME&fp=chrome&pbk=$PUBLICKEY&path=$XHTTP_PATH&mode=auto#${IPV6}-damncrab_docker_xhttp_reality"
     echo "IPV6 订阅连接: $SUB_IPV6" >>/config_info.txt
     echo -e "IPV6 订阅二维码:\n$(echo "$SUB_IPV6" | qrencode -o - -t UTF8)" >>/config_info.txt
   fi
