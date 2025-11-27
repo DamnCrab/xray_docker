@@ -31,12 +31,14 @@ ENV TZ=Asia/Shanghai
 WORKDIR /
 
 COPY ./entrypoint.sh /
-COPY ./config.json /
+COPY ./config.json /etc/xray/config.json
+COPY ./logrotate.xray /etc/logrotate.d/xray
 
 COPY --from=builder /app/xray /
 
-RUN apk add --no-cache tzdata ca-certificates jq curl libqrencode-tools && \
+RUN apk add --no-cache tzdata ca-certificates jq curl libqrencode-tools logrotate && \
     mkdir -p /var/log/xray && \
+    chmod 0644 /etc/logrotate.d/xray && \
     wget -O /geosite.dat https://github.com/v2fly/domain-list-community/releases/latest/download/dlc.dat && \
     wget -O /geoip.dat https://github.com/v2fly/geoip/releases/latest/download/geoip.dat && \
     chmod +x /entrypoint.sh

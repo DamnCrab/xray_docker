@@ -1,0 +1,20 @@
+version: '3'
+services:
+  xray:
+    build: .
+    image: xray-xhttp-reality:latest
+    container_name: xray-xhttp-reality
+    restart: always
+    network_mode: "host"
+    volumes:
+      - ./config:/etc/xray
+      - ./logs:/var/log/xray
+    environment:
+      - UUID=
+      - DEST=www.apple.com:443
+      - SERVERNAMES=www.apple.com images.apple.com
+      - PRIVATEKEY=
+      - NETWORK=xhttp
+      - XHTTP_PATH=
+      - EXTERNAL_PORT=443
+      - HOSTMODE_PORT=443
