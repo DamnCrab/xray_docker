@@ -17,8 +17,8 @@ else
   else
       echo "Initializing config..."
       
-      IPV6=$(curl -6 -sSL --connect-timeout 3 --retry 2  ip.sb || echo "null")
-      IPV4=$(curl -4 -sSL --connect-timeout 3 --retry 2  ip.sb || echo "null")
+      IPV6=$(curl -6 -sSL --connect-timeout 5 --retry 3 ip.sb || curl -6 -sSL --connect-timeout 5 --retry 3 ifconfig.co || echo "null")
+      IPV4=$(curl -4 -sSL --connect-timeout 5 --retry 3 ip.sb || curl -4 -sSL --connect-timeout 5 --retry 3 ifconfig.co || echo "null")
       
       if [ -z "$UUID" ]; then
         echo "UUID is not set, generate random UUID "
