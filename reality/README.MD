@@ -127,6 +127,50 @@ docker run -d --name xray_reality \
 - 更新频率：每天凌晨 3:00 (UTC)
 - 更新脚本位于：`/usr/local/bin/update_dat.sh`
 
+## 密钥生成与配置一致性 (Key Generation & Consistency)
+
+为了保证将容器迁移到其他设备时客户端配置(Public Key)不需要变更，建议手动生成并固定 `PRIVATEKEY`。
+
+**1. 生成新的密钥对：**
+使用以下命令生成一对新的 Public/Private Key：
+```bash
+docker run --rm damncrab/xray_docker_reality:latest xray x25519
+```
+*输出示例：*
+> Private key: `Output_PrivateKey_Here`
+> Public key: `Output_PublicKey_Here`
+
+**2. 在配置中使用：**
+将生成的 **Private Key** 填入环境变量 `PRIVATEKEY` 中。此时客户端只需配置对应的 **Public Key** 即可。
+
+## Docker Compose 示例
+
+使用固定的 `PRIVATEKEY` 可以确保客户端连接信息在容器重建或迁移后依然有效。
+
+```yaml
+version: '3.8'
+services:
+  xray:
+    image: damncrab/xray_docker_reality:latest
+    container_name: xray_reality
+    restart: always
+    ports:
+      - "18443:443"
+    environment:
+      - EXTERNAL_PORT=18443
+      - PRIVATEKEY=your_generated_private_key_here  # 必填：填入上一步生成的 Private Key
+      # - UUID=your-uuid-here  # 建议固定 UUID
+      # - DEST=www.apple.com:443
+      # - SERVERNAMES=www.apple.com images.apple.com
+    volumes:
+      - ./xray-reality-data:/data
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "3"
+```
+
 ## 注意事项
 请确保在使用前已正确安装和配置 XRay 客户端。
 为了保证安全和稳定，请勿将 UUID、私钥等敏感信息泄露给他人。

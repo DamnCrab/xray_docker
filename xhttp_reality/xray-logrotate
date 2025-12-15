@@ -1,0 +1,9 @@
+/data/*.log {
+    daily
+    rotate 7
+    missingok
+    notifempty
+    compress
+    copytruncate
+    size 10M
+}
