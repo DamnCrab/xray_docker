@@ -1,5 +1,5 @@
 # builder
-FROM golang:alpine AS builder
+FROM public.ecr.aws/docker/library/golang:alpine AS builder
 LABEL version="0.0.29"
 
 
@@ -14,7 +14,7 @@ RUN apk add --no-cache --no-scripts git curl jq && \
     go build -v -o xray /app/main/
 
 # runner
-FROM alpine:latest AS runner
+FROM public.ecr.aws/docker/library/alpine:latest AS runner
 
 
 ENV UUID=""
