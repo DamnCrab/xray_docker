@@ -78,26 +78,52 @@ jobs:
           LATEST_VERSION=$(curl -s https://api.github.com/repos/XTLS/Xray-core/releases | jq -r '.[0].tag_name')
           echo "XRAY_VERSION=$LATEST_VERSION" >> $GITHUB_ENV
 
-      - name: Build and push by digest
-        id: build
+      - name: Build and push by digest (GHCR)
+        id: build-ghcr
         uses: docker/build-push-action@v6.18.0
         with:
           context: ./xhttp_reality
           file: ./xhttp_reality/Dockerfile
           platforms: ${{ matrix.platform }}
-          outputs: type=image,name=damncrab/xray_docker_xhttp_reality,name=ghcr.io/${{ env.OWNER_LC }}/xray_docker_xhttp_reality,push-by-digest=true,name-canonical=true,push=true
+          outputs: type=image,name=ghcr.io/${{ env.OWNER_LC }}/xray_docker_xhttp_reality,push-by-digest=true,name-canonical=true,push=true
 
-      - name: Export digest
+      - name: Export digest (GHCR)
         run: |
-          mkdir -p /tmp/digests
-          digest="${{ steps.build.outputs.digest }}"
-          touch "/tmp/digests/${digest#sha256:}"
+          mkdir -p /tmp/digests_ghcr
+          digest="${{ steps.build-ghcr.outputs.digest }}"
+          touch "/tmp/digests_ghcr/${digest#sha256:}"
 
-      - name: Upload digest
+      - name: Upload digest (GHCR)
         uses: actions/upload-artifact@v4
         with:
-          name: digests-xhttp-${{ env.PLATFORM_PAIR }}
-          path: /tmp/digests/*
+          name: digests-xhttp-ghcr-${{ env.PLATFORM_PAIR }}
+          path: /tmp/digests_ghcr/*
+          if-no-files-found: error
+          retention-days: 1
+
+      - name: Build and push by digest (Docker Hub)
+        id: build-dockerhub
+        uses: docker/build-push-action@v6.18.0
+        continue-on-error: true
+        with:
+          context: ./xhttp_reality
+          file: ./xhttp_reality/Dockerfile
+          platforms: ${{ matrix.platform }}
+          outputs: type=image,name=damncrab/xray_docker_xhttp_reality,push-by-digest=true,name-canonical=true,push=true
+
+      - name: Export digest (Docker Hub)
+        if: steps.build-dockerhub.outcome == 'success'
+        run: |
+          mkdir -p /tmp/digests_dockerhub
+          digest="${{ steps.build-dockerhub.outputs.digest }}"
+          touch "/tmp/digests_dockerhub/${digest#sha256:}"
+
+      - name: Upload digest (Docker Hub)
+        uses: actions/upload-artifact@v4
+        if: steps.build-dockerhub.outcome == 'success'
+        with:
+          name: digests-xhttp-dockerhub-${{ env.PLATFORM_PAIR }}
+          path: /tmp/digests_dockerhub/*
           if-no-files-found: error
           retention-days: 1
 
@@ -105,11 +131,19 @@ jobs:
     runs-on: ubuntu-22.04
     needs: build
     steps:
-      - name: Download digests
+      - name: Download digests (GHCR)
         uses: actions/download-artifact@v4
         with:
-          path: /tmp/digests
-          pattern: digests-xhttp-*
+          path: /tmp/digests_ghcr
+          pattern: digests-xhttp-ghcr-*
+          merge-multiple: true
+
+      - name: Download digests (Docker Hub)
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          path: /tmp/digests_dockerhub
+          pattern: digests-xhttp-dockerhub-*
           merge-multiple: true
 
       - name: Docker Setup Buildx
@@ -131,6 +165,8 @@ jobs:
       - name: Checkout for Version
         uses: actions/checkout@v4
 
+      - name: Get Version
+        run: |
           VERSION=$(cat xhttp_reality/VERSION)
           LATEST_VERSION=$(curl -s https://api.github.com/repos/XTLS/Xray-core/releases | jq -r '.[0].tag_name')
           echo "VERSION=$VERSION" >> $GITHUB_ENV
@@ -140,16 +176,30 @@ jobs:
         env:
           OWNER: '${{ github.repository_owner }}'
 
-      - name: Create manifest list and push
-        working-directory: /tmp/digests
+      - name: Create manifest list and push (GHCR)
+        working-directory: /tmp/digests_ghcr
         run: |
+          docker buildx imagetools create -t ghcr.io/${{ env.OWNER_LC }}/xray_docker_xhttp_reality:${{env.VERSION}}-ubuntu-22.04-xray-${{env.XRAY_VERSION}} \
+            -t ghcr.io/${{ env.OWNER_LC }}/xray_docker_xhttp_reality:latest \
+            $(printf 'ghcr.io/${{ env.OWNER_LC }}/xray_docker_xhttp_reality@sha256:%s ' *)
+
+      - name: Inspect image (GHCR)
+        run: |
+          docker buildx imagetools inspect ghcr.io/${{ env.OWNER_LC }}/xray_docker_xhttp_reality:latest
+
+      - name: Create manifest list and push (Docker Hub)
+        working-directory: /tmp/digests_dockerhub
+        continue-on-error: true
+        run: |
+          if [ -z "$(ls -A .)" ]; then
+             echo "No digests found for Docker Hub, skipping."
+             exit 0
+          fi
           docker buildx imagetools create -t damncrab/xray_docker_xhttp_reality:${{env.VERSION}}-ubuntu-22.04-xray-${{env.XRAY_VERSION}} \
             -t damncrab/xray_docker_xhttp_reality:latest \
-            -t ghcr.io/${{ env.OWNER_LC }}/xray_docker_xhttp_reality:${{env.VERSION}}-ubuntu-22.04-xray-${{env.XRAY_VERSION}} \
-            -t ghcr.io/${{ env.OWNER_LC }}/xray_docker_xhttp_reality:latest \
             $(printf 'damncrab/xray_docker_xhttp_reality@sha256:%s ' *)
 
-      - name: Inspect image
+      - name: Inspect image (Docker Hub)
+        continue-on-error: true
         run: |
-          docker buildx imagetools inspect damncrab/xray_docker_xhttp_reality:latest
-          docker buildx imagetools inspect ghcr.io/${{ env.OWNER_LC }}/xray_docker_xhttp_reality:latest
+          docker buildx imagetools inspect damncrab/xray_docker_xhttp_reality:latest || true
