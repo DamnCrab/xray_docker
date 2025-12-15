@@ -1,8 +1,8 @@
 {
   "log": {
     "loglevel": "error",
-    "access": "/var/log/xray/access.log",
-    "error": "/var/log/xray/error.log"
+    "access": "/data/access.log",
+    "error": "/data/error.log"
   },
   "api": {
     "tag": "api",
@@ -49,7 +49,9 @@
       },
       "sniffing": {
         "enabled": true,
-        "destOverride": ["tls"],
+        "destOverride": [
+          "tls"
+        ],
         "routeOnly": true
       }
     },
@@ -107,12 +109,18 @@
     "domainStrategy": "IPIfNonMatch",
     "rules": [
       {
-        "inboundTag": ["dokodemo-in"],
-        "domain": ["xx"],
+        "inboundTag": [
+          "dokodemo-in"
+        ],
+        "domain": [
+          "xx"
+        ],
         "outboundTag": "direct"
       },
       {
-        "inboundTag": ["dokodemo-in"],
+        "inboundTag": [
+          "dokodemo-in"
+        ],
         "outboundTag": "blocked"
       },
       {
@@ -156,4 +164,3 @@
     ]
   }
 }
-

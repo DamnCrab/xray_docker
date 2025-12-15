@@ -97,27 +97,43 @@ docker rm -f xray_reality
 * security：reality
 * shortIds：留空
 
+## 数据持久化与日志管理 (Data Persistence and Log Rotation)
+
+镜像已调整为将所有配置和日志存储在 `/data` 目录下。
+- 配置文件: `/data/config.json`
+- 配置文件信息: `/data/config_info.txt`
+- 日志文件: `/data/access.log`, `/data/error.log`
+
+**建议挂载 `/data` 目录以方便管理配置和日志：**
+
+```bash
+mkdir -p $(pwd)/xray-reality-data
+docker run -d --name xray_reality \
+  -v $(pwd)/xray-reality-data:/data \
+  --restart=always \
+  -p 443:443 \
+  -e EXTERNAL_PORT=443 \
+  damncrab/xray_docker_reality:latest
+```
+
+**关于日志自动清理：**
+由于 Xray 输出日志到文件 (`/data/access.log`)，Docker 的 `--log-opt` 选项不会限制这些文件的大小。
+为了防止日志无限增长，请在**宿主机**上配置 `logrotate` 对挂载目录下的日志进行切割。
+
+例如，创建 `/etc/logrotate.d/xray-reality` 内容如下（假设挂载路径为 `/root/xray-reality-data`）：
+```
+/root/xray-reality-data/*.log {
+    daily
+    rotate 7
+    missingok
+    notifempty
+    compress
+    copytruncate
+}
+```
+
 ## 注意事项
 请确保在使用前已正确安装和配置 XRay 客户端。
 为了保证安全和稳定，请勿将 UUID、私钥等敏感信息泄露给他人。
 
-## 捐赠
 
-您可以使用我的 搬瓦工 AFF 购买 VPS
-
-https://bandwagonhost.com/aff.php?aff=63939
-
-您可以使用我的 JustMySocks AFF 购买搬瓦工提供的代理
-
-https://justmysocks.net/members/aff.php?aff=17621
-
-您可以使用我的 DMIT AFF 购买 VPS
-
-https://www.dmit.io/aff.php?aff=3957
-
-您可以使用我的 Vultr AFF 创建新的 Vultr 账号并使用
-
-https://www.vultr.com/?ref=6881279
-
-您可以通过 USDT 支持我，感谢您的支持
-TRC20:TFannfnajNGYsMTuVDcXfZXXPbcaxAEffa
