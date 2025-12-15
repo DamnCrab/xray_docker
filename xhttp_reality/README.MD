@@ -131,11 +131,9 @@ docker run -d --name xray_xhttp_reality \
 **1. 生成新的密钥对：**
 使用以下命令生成一对新的 Public/Private Key：
 ```bash
-docker run --rm DamnCrab/xray_docker_xhttp_reality:latest xray x25519
+docker run --rm DamnCrab/xray_docker_xhttp_reality:latest generate_keys.sh
 ```
-*输出示例：*
-> Private key: `Output_PrivateKey_Here`
-> Public key: `Output_PublicKey_Here`
+*输出示例将显示生成的 PRIVATE KEY 和 PUBLIC KEY。*
 
 **2. 在配置中使用：**
 将生成的 **Private Key** 填入环境变量 `PRIVATEKEY` 中。此时客户端只需配置对应的 **Public Key** 即可。

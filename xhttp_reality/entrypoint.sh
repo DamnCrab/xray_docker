@@ -5,6 +5,13 @@ if [ ! -f /data/config.json ]; then
   cp /config.json.template /data/config.json
 fi
 
+# If command starts with xray or is a shell script, execute it directly
+case "$1" in
+  xray|*.sh)
+    exec "$@"
+    ;;
+esac
+
 if [ -f /data/config_info.txt ]; then
   echo "config.json exist"
 else

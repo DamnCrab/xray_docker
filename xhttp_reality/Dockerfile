@@ -44,7 +44,8 @@ RUN apk add --no-cache --no-scripts tzdata ca-certificates jq curl libqrencode-t
 
 COPY xray-logrotate /etc/logrotate.d/xray
 COPY update_dat.sh /usr/local/bin/update_dat.sh
-RUN chmod +x /usr/local/bin/update_dat.sh && dos2unix /usr/local/bin/update_dat.sh && \
+COPY generate_keys.sh /usr/local/bin/generate_keys.sh
+RUN chmod +x /usr/local/bin/update_dat.sh /usr/local/bin/generate_keys.sh && dos2unix /usr/local/bin/update_dat.sh /usr/local/bin/generate_keys.sh && \
     echo "0 3 * * * /usr/local/bin/update_dat.sh" >> /etc/crontabs/root && \
     echo "0 * * * * /usr/sbin/logrotate /etc/logrotate.d/xray" >> /etc/crontabs/root
 
