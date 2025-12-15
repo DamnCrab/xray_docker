@@ -15,8 +15,23 @@ esac
 if [ -f /data/config_info.txt ]; then
   echo "config.json exist"
 else
-  IPV6=$(curl -6 -sSL --connect-timeout 3 --retry 2  ip.sb || echo "null")
-  IPV4=$(curl -4 -sSL --connect-timeout 3 --retry 2  ip.sb || echo "null")
+  # Function to get IPv4 with fallback
+  get_ipv4() {
+    curl -4 -sSL --connect-timeout 3 --retry 2 ip.sb 2>/dev/null || \
+    curl -4 -sSL --connect-timeout 3 --retry 2 api.ipify.org 2>/dev/null || \
+    curl -4 -sSL --connect-timeout 3 --retry 2 ifconfig.me 2>/dev/null || \
+    echo "null"
+  }
+
+  # Function to get IPv6 with fallback
+  get_ipv6() {
+    curl -6 -sSL --connect-timeout 3 --retry 2 ip.sb 2>/dev/null || \
+    curl -6 -sSL --connect-timeout 3 --retry 2 ifconfig.co 2>/dev/null || \
+    echo "null"
+  }
+
+  IPV4=$(get_ipv4)
+  IPV6=$(get_ipv6)
   if [ -z "$UUID" ]; then
     echo "UUID is not set, generate random UUID "
     UUID="$(/xray uuid)"
@@ -49,6 +64,11 @@ else
     PRIVATEKEY=$(cat /key | grep "Private" | awk -F ': ' '{print $2}')
     PUBLICKEY=$(cat /key | grep "Password" | awk -F ': ' '{print $2}')
     echo "Private key: $PRIVATEKEY"
+    echo "Public key: $PUBLICKEY"
+  else
+    echo "PRIVATEKEY is set. Deriving PUBLICKEY..."
+    # Derive PUBLICKEY from provided PRIVATEKEY
+    PUBLICKEY=$(/xray x25519 -i "$PRIVATEKEY" | grep "Password" | awk -F ': ' '{print $2}')
     echo "Public key: $PUBLICKEY"
   fi
 
