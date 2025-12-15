@@ -1,8 +1,8 @@
 ## xray_docker_reality
 xray reality docker 镜像
 
-[![xray_docker_reality_docker_image_build](https://github.com/wulabing/xray_docker/actions/workflows/xray_docker_reality.yml/badge.svg)](https://github.com/wulabing/xray_docker/actions/workflows/xray_docker_reality.yml)
-![xray_docker_xhttp_reality_docker_image_build](https://github.com/wulabing/xray_docker/actions/workflows/xray_docker_xhttp_reality.yml/badge.svg)
+[![xray_docker_reality_docker_image_build](https://github.com/DamnCrab/xray_docker/actions/workflows/xray_docker_reality.yml/badge.svg)](https://github.com/DamnCrab/xray_docker/actions/workflows/xray_docker_reality.yml)
+![xray_docker_xhttp_reality_docker_image_build](https://github.com/DamnCrab/xray_docker/actions/workflows/xray_docker_xhttp_reality.yml/badge.svg)
 
 ## 注意事项
 请确保在使用前已正确安装和配置 XRay 客户端。
@@ -15,8 +15,8 @@ xray reality docker 镜像
 
 ## 传送门
 
-- [xray_docker_reality](https://github.com/wulabing/xray_docker/tree/master/reality)
-- [xray_docker_xhttp_reality](https://github.com/wulabing/xray_docker/tree/master/xhttp_reality)
+- [xray_docker_reality](https://github.com/DamnCrab/xray_docker/tree/master/reality)
+- [xray_docker_xhttp_reality](https://github.com/DamnCrab/xray_docker/tree/master/xhttp_reality)
 
 ## 捐赠
 

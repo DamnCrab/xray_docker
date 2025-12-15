@@ -1,6 +1,5 @@
 # builder
 FROM golang:alpine AS builder
-LABEL maintainer="wulabing <wulabing@gmail.com>"
 LABEL version="0.0.29"
 
 
