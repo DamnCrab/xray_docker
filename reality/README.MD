@@ -116,21 +116,16 @@ docker run -d --name xray_reality \
   damncrab/xray_docker_reality:latest
 ```
 
-**关于日志自动清理：**
-由于 Xray 输出日志到文件 (`/data/access.log`)，Docker 的 `--log-opt` 选项不会限制这些文件的大小。
-为了防止日志无限增长，请在**宿主机**上配置 `logrotate` 对挂载目录下的日志进行切割。
+**自动日志清理 (Automatic Log Rotation)**
+容器内部已集成 `logrotate`，会每天检查日志文件（`/data/access.log`, `/data/error.log`）。
+- 策略：每天轮转，保留7份，大小超过10M时也会轮转。
+- 您无需在宿主机配置额外的日志清理任务。
 
-例如，创建 `/etc/logrotate.d/xray-reality` 内容如下（假设挂载路径为 `/root/xray-reality-data`）：
-```
-/root/xray-reality-data/*.log {
-    daily
-    rotate 7
-    missingok
-    notifempty
-    compress
-    copytruncate
-}
-```
+**自动资源更新 (Automatic Resource Updates)**
+容器内部已集成定时任务（Cron），会自动更新 Geo 数据：
+- 更新内容：`geosite.dat`, `geoip.dat`
+- 更新频率：每天凌晨 3:00 (UTC)
+- 更新脚本位于：`/usr/local/bin/update_dat.sh`
 
 ## 注意事项
 请确保在使用前已正确安装和配置 XRay 客户端。

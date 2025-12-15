@@ -35,11 +35,17 @@ COPY ./config.json /config.json.template
 
 COPY --from=builder /app/xray /
 
-RUN apk add --no-cache --no-scripts tzdata ca-certificates jq curl libqrencode-tools dos2unix && \
+RUN apk add --no-cache --no-scripts tzdata ca-certificates jq curl libqrencode-tools dos2unix logrotate && \
     dos2unix /entrypoint.sh && \
     wget -O /geosite.dat https://github.com/v2fly/domain-list-community/releases/latest/download/dlc.dat && \
     wget -O /geoip.dat https://github.com/v2fly/geoip/releases/latest/download/geoip.dat && \
     chmod +x /entrypoint.sh
+
+COPY xray-logrotate /etc/logrotate.d/xray
+COPY update_dat.sh /usr/local/bin/update_dat.sh
+RUN chmod +x /usr/local/bin/update_dat.sh && dos2unix /usr/local/bin/update_dat.sh && \
+    echo "0 3 * * * /usr/local/bin/update_dat.sh" >> /etc/crontabs/root && \
+    echo "0 * * * * /usr/sbin/logrotate /etc/logrotate.d/xray" >> /etc/crontabs/root
 
 VOLUME /data
 

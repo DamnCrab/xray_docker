@@ -104,5 +104,8 @@ fi
 # show config info
 cat /data/config_info.txt
 
+# start cron daemon in background
+crond -b
+
 # run xray
 exec /xray -config /data/config.json
